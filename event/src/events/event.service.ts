@@ -5,14 +5,17 @@ import { Model } from 'mongoose';
 import { CreateEventDto } from './dto/create-event.dto';
 import { EventStrategyFactory } from '../strategies/factories/event-strategy.factory';
 import { RewardService } from '../rewards/reward.service';
-// import { RewardDocument } from '../rewards/reward.schema';
+import { Reward, RewardDocument } from '../rewards/reward.schema';
 
 @Injectable()
 export class EventService {
     constructor(
         @InjectModel(Event.name)
         private readonly eventModel: Model<EventDocument>,
-        // private readonly rewardModel: Model<RewardDocument>,
+
+        @InjectModel(Reward.name)
+        private readonly rewardModel: Model<RewardDocument>,
+
         private readonly eventStrategyFactory: EventStrategyFactory,
         private readonly rewardService: RewardService,
     ) {}
@@ -42,38 +45,38 @@ export class EventService {
         return this.eventModel.find().sort({ createdAt: -1 }).lean();
     }
 
-    // async findClaimableEvents(userId: string) {
-    //     const now = new Date();
-    //
-    //     const allEvents = await this.eventModel
-    //         .find({
-    //             startDate: { $lte: now },
-    //             endDate: { $gte: now },
-    //         })
-    //         .lean();
-    //
-    //     const rewards = await this.rewardModel
-    //         .find({ recipientId: userId })
-    //         .lean();
-    //     const claimedEventIds = new Set(
-    //         rewards.map((r) => r.eventId.toString()),
-    //     );
-    //
-    //     const claimable: any[] = [];
-    //
-    //     for (const event of allEvents) {
-    //         if (claimedEventIds.has(event._id.toString())) continue;
-    //
-    //         const strategy = this.eventStrategyFactory.getStrategy(
-    //             event.eventType,
-    //         );
-    //         const passed = await strategy.validate(event.config, userId);
-    //
-    //         if (passed) {
-    //             claimable.push(event);
-    //         }
-    //     }
-    //
-    //     return claimable;
-    // }
+    async findClaimableEvents(userId: string) {
+        const now = new Date();
+
+        const allEvents = await this.eventModel
+            .find({
+                startDate: { $lte: now },
+                endDate: { $gte: now },
+            })
+            .lean();
+
+        const rewards = await this.rewardModel
+            .find({ recipientId: userId })
+            .lean();
+        const claimedEventIds = new Set(
+            rewards.map((r) => r.eventId.toString()),
+        );
+
+        const claimable: any[] = [];
+
+        for (const event of allEvents) {
+            if (claimedEventIds.has(event._id.toString())) continue;
+
+            const strategy = this.eventStrategyFactory.getStrategy(
+                event.eventType,
+            );
+            const passed = await strategy.validate(event.config, userId);
+
+            if (passed) {
+                claimable.push(event);
+            }
+        }
+
+        return claimable;
+    }
 }

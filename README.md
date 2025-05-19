@@ -33,13 +33,16 @@
 ### 이벤트 서버 (`event`)
 
 * 이벤트 등록
-    * 제목, 이벤트 타입(`SEVEN_DAY_LOGIN`, `FIRST_LOGIN` 등)
+    * 제목, 이벤트 타입(`SEVEN_DAY_LOGIN`, `ITEM_CONDITION` 등)
     * 설정값(config): 기간, 보상 타입, 보상 내용
     * 시작일/종료일 설정
 * 전략 패턴 기반 조건 검증
 * 조건 충족 시 보상 자동 지급
 * 수동 보상 수령 요청(`/reward/claim`)
 * 전체 보상 기록 또는 사용자별 조회 기능
+* 구현된 이벤트
+  * SEVEN_DAY_LOGIN: 7일 연속 로그인 시 포인트 지급
+  * ITEM_CONDITION: 특정 아이템 일정 개수 이상 보유 시 포인트 지급
 
 ### 보상 시스템
 

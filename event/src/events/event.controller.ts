@@ -19,8 +19,8 @@ export class EventController {
         return this.eventService.findAll();
     }
 
-    // @Get('claimable')
-    // async getClaimableEvents(@Headers('x-user-id') userId: string) {
-    //     return this.eventService.findClaimableEvents(userId);
-    // }
+    @Get('claimable')
+    async getClaimableEvents(@Headers('x-user-id') userId: string) {
+        return this.eventService.findClaimableEvents(userId);
+    }
 }
