@@ -15,6 +15,10 @@ export class ItemConditionStrategy implements EventStrategy {
 
         const userItems = data.items || [];
 
+        if (!Array.isArray(config.items)) {
+            throw new Error('Invalid config: items is not an array');
+        }
+
         return config.items.every(
             (condition: { name: string; quantity: number }) => {
                 const owned = userItems.find(
