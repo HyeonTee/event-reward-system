@@ -1,0 +1,16 @@
+node_modules
+dist
+.env
+*.log
+.idea
+
+auth/node_modules/
+gateway/node_modules/
+event/node_modules/
+auth/dist/
+gateway/dist/
+event/dist/
+
+auth/.env
+event/.env
+gateway/.env

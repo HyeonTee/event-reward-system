@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:5
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  auth:
+    build: ./auth
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./auth:/app
+      - /app/node_modules
+    env_file:
+      - ./auth/.env
+    command: npm run start:dev
+    depends_on:
+      - mongo
+
+  event:
+    build: ./event
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./event:/app
+      - /app/node_modules
+    env_file:
+      - ./event/.env
+    command: npm run start:dev
+    depends_on:
+      - mongo
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./gateway:/app
+      - /app/node_modules
+    env_file:
+      - ./gateway/.env
+    command: npm run start:dev
+    depends_on:
+      - auth
+      - event
+
+volumes:
+  mongo_data:
